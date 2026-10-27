@@ -112,27 +112,71 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-r
 
 /* ---------- home: the sky map ---------- */
 #home .homeHead{position:relative;z-index:3;text-align:center;padding:max(40px,env(safe-area-inset-top)) 16px 0}
+.pills{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+.pill.soft{background:rgba(184,50,79,.14);border-color:rgba(224,96,127,.38)}
 .map{position:absolute;left:4%;right:4%;top:178px;bottom:70px;z-index:3;max-width:560px;margin:0 auto}
 .map svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+.map .crown{opacity:.1;transition:opacity 1.8s}
+.map .crown.full{animation:crownGlow 5s ease-in-out infinite}
+@keyframes crownGlow{0%,100%{opacity:.42}50%{opacity:.64}}
 .map line{transition:stroke .8s,stroke-width .8s}
 .map line.draw{stroke-dasharray:var(--len);stroke-dashoffset:var(--len);animation:drawLine 1.4s ease forwards .35s}
 @keyframes drawLine{to{stroke-dashoffset:0}}
-.star{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:9px;width:86px;padding:8px 0}
+.map line.pulse{animation:pulse linear infinite}
+@keyframes pulse{from{stroke-dashoffset:calc(var(--len) + 18px)}to{stroke-dashoffset:0}}
+.map line.comet{stroke-dashoffset:14px;animation:comet 1.4s ease .35s forwards}
+@keyframes comet{0%{stroke-dashoffset:14px;opacity:1}88%{opacity:1}100%{stroke-dashoffset:calc(var(--len) * -1);opacity:0}}
+.star{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:9px;width:86px;padding:8px 0;z-index:2}
 .core{position:relative;width:12px;height:12px;border-radius:50%;background:var(--star);box-shadow:0 0 10px 3px var(--star),0 0 30px 9px rgba(216,176,106,.55);transition:all .8s}
 .core::before,.core::after{content:'';position:absolute;left:50%;top:50%;width:46px;height:2px;margin:-1px 0 0 -23px;background:linear-gradient(90deg,transparent,var(--star),transparent);border-radius:2px;transition:all .8s}
 .core::after{transform:rotate(90deg)}
 .star.off .core{width:8px;height:8px;opacity:.75;box-shadow:0 0 8px 2px var(--star);animation:call 2.6s ease-in-out infinite}
 .star.off .core::before,.star.off .core::after{width:22px;margin-left:-11px;opacity:.6}
 @keyframes call{50%{box-shadow:0 0 14px 5px var(--star),0 0 0 9px rgba(246,226,176,.06)}}
-.star small{font-family:var(--display);font-style:italic;font-size:16px;line-height:1.05;text-align:center;transition:color .8s,opacity .8s}
+.star.on .core{animation:lit 4s ease-in-out infinite}
+@keyframes lit{50%{box-shadow:0 0 14px 4px #fff3d6,0 0 40px 14px rgba(216,176,106,.6)}}
+.star small{font-family:var(--display);font-style:italic;font-size:16px;line-height:1.05;text-align:center;transition:color .8s,opacity .8s;text-shadow:0 1px 8px #090306}
 .star.off small{opacity:.6}
 .star.on small{color:var(--accent)}
-.star.just .core{animation:ignite 1.4s ease-out}
+.star.just .core{animation:ignite 1.4s ease-out var(--d,0s) both,lit 4s ease-in-out calc(var(--d,0s) + 1.4s) infinite}
+#mapPulse.wait{animation:fade 1s ease var(--w,0s) both}
 @keyframes ignite{0%{transform:scale(.4)}40%{transform:scale(2.2);box-shadow:0 0 30px 14px #fff3d6}100%{transform:none}}
+.moon{position:absolute;right:14px;top:calc(max(40px,env(safe-area-inset-top)) - 8px);width:52px;height:52px;z-index:4;filter:drop-shadow(0 0 12px rgba(246,226,176,.42))}
+.moon svg{width:100%;height:100%;display:block;animation:moonBob 7s ease-in-out infinite}
+.moon.wob svg{animation:moonWob 1s cubic-bezier(.3,1.6,.5,1)}
+@keyframes moonBob{50%{transform:translateY(-3px) rotate(-4deg)}}
+@keyframes moonWob{30%{transform:rotate(-20deg) scale(1.18)}65%{transform:rotate(9deg) scale(1.04)}}
+.tiny{position:absolute;left:25%;top:10%;width:44px;height:44px;transform:translate(-50%,-50%);z-index:2}
+.tiny i{position:absolute;left:50%;top:50%;width:3px;height:3px;margin:-1.5px;border-radius:50%;background:#ffd0dc;box-shadow:0 0 6px 2px rgba(224,96,127,.55);animation:tinyTw 3.8s ease-in-out infinite;transition:all .8s}
+@keyframes tinyTw{0%,100%{opacity:.35}46%{opacity:.85}50%{opacity:1;transform:scale(2)}56%{opacity:.75}}
+.tiny small{position:absolute;left:50%;top:80%;transform:translateX(-50%);white-space:nowrap;font-family:var(--display);font-style:italic;font-size:12.5px;color:#ffd0dc;opacity:0;transition:opacity 1.2s}
+.tiny.lit i{width:7px;height:7px;margin:-3.5px;background:#fff3f6;box-shadow:0 0 12px 4px rgba(224,96,127,.85),0 0 30px 10px rgba(224,96,127,.3);animation:none;opacity:1}
+.tiny.lit small{opacity:.9}
 .homeHint{position:absolute;left:0;right:0;bottom:max(22px,env(safe-area-inset-bottom));z-index:3;text-align:center;font-size:13px;opacity:.6}
 #nameLayer{position:fixed;inset:0;z-index:40;background:rgba(9,3,6,.35);animation:fade 1s}
 #nameLayer canvas{position:absolute;inset:0;width:100%;height:100%}
 #nameLayer .nameText{position:absolute;left:0;right:0;bottom:max(70px,12vh);text-align:center;padding:0 16px}
+
+/* ---------- secrets ---------- */
+.toast{position:fixed;left:50%;top:max(68px,calc(env(safe-area-inset-top) + 56px));z-index:170;width:min(340px,calc(100% - 32px));transform:translateX(-50%);padding:14px 18px 15px;border-radius:18px;text-align:center;background:linear-gradient(160deg,rgba(58,13,31,.95),rgba(24,6,13,.95));border:1px solid rgba(216,176,106,.55);box-shadow:0 18px 50px -18px #000,0 0 34px -12px rgba(216,176,106,.65);animation:toastIn .6s cubic-bezier(.2,1.3,.4,1);pointer-events:none}
+.toast.out{opacity:0;transform:translate(-50%,-14px);transition:opacity .45s,transform .45s}
+.toast small{display:block;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent)}
+.toast b{display:block;font-family:var(--display);font-weight:400;font-style:italic;font-size:22px;margin-top:4px}
+.toast p{margin:4px 0 0;font-size:14px;opacity:.88;line-height:1.4}
+@keyframes toastIn{from{opacity:0;transform:translate(-50%,-22px) scale(.92)}}
+.secrets{position:relative;width:min(400px,100%);max-height:84vh;overflow-y:auto;padding:26px 18px 20px;border-radius:24px;background:linear-gradient(170deg,#2a0b18,#140409);border:1px solid var(--glassb);box-shadow:0 30px 70px -30px #000;animation:pop .4s cubic-bezier(.3,1.4,.5,1)}
+.secrets .title{font-size:34px;text-align:center}
+.secrets .eyebrow{text-align:center;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin:0 0 4px}
+.secrets .sub{text-align:center;font-size:13.5px}
+.secrets ul{list-style:none;margin:16px 0 0;padding:0;display:grid;gap:8px}
+.secrets li{padding:10px 14px;border-radius:14px;border:1px dashed rgba(216,176,106,.25);background:rgba(255,255,255,.02)}
+.secrets li b{display:block;font-family:var(--display);font-style:italic;font-weight:400;font-size:17px;opacity:.5}
+.secrets li span{display:block;font-size:13px;opacity:.72;margin-top:2px;line-height:1.4}
+.secrets li.got{border:1px solid rgba(216,176,106,.5);background:rgba(216,176,106,.08)}
+.secrets li.got b{opacity:1;color:var(--accent)}
+.secrets li.got span{opacity:.92}
+.secrets .close{position:absolute;top:10px;right:12px;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.06);color:var(--ink);font-size:20px}
+
 
 /* ---------- song ---------- */
 .player{position:relative;width:min(300px,82vw);aspect-ratio:1;margin:30px auto 0}
@@ -305,6 +349,10 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-r
 .letterPaper .sign{text-align:right;margin-top:18px;font-size:26px}
 .typing::after{content:'|';animation:breathe .8s infinite;color:var(--red)}
 
+.letterPaper .sign.tap{cursor:pointer}
+.letterPaper .ps{font-family:var(--hand);font-size:23px;line-height:30px;color:#8f1c3a;margin-top:22px}
+#cakeName{cursor:pointer}
+
 /* the section styles above came from the first version; these re-dress them for the wine & gold sky */
 #arcade::before{display:none}
 .game{background:rgba(29,8,17,.7);border:1px solid var(--glassb);box-shadow:inset 0 1px 0 rgba(255,240,210,.1)}
@@ -362,12 +410,18 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-r
 
 <!-- HOME: the sky map -->
 <section id="home" class="screen hidden" style="overflow:hidden">
+  <button class="moon" id="moon" aria-label="the moon"><svg viewBox="0 0 100 100"><defs><radialGradient id="mnG" cx=".36" cy=".4" r=".7"><stop offset="0" stop-color="#fffaf0"/><stop offset=".55" stop-color="#f6e2b0"/><stop offset="1" stop-color="#c9a15a"/></radialGradient><mask id="mnM"><rect width="100" height="100" fill="#fff"/><circle cx="67" cy="38" r="37" fill="#000"/></mask></defs><g mask="url(#mnM)"><circle cx="50" cy="50" r="40" fill="url(#mnG)"/><circle cx="30" cy="56" r="5" fill="#c9a15a" opacity=".35"/><circle cx="40" cy="76" r="3.5" fill="#c9a15a" opacity=".3"/><circle cx="22" cy="40" r="2.6" fill="#c9a15a" opacity=".3"/></g></svg></button>
   <div class="homeHead">
     <h1 class="title" style="font-size:clamp(40px,12vw,52px)">Ishu's sky</h1>
     <p class="sub" style="margin-top:8px">Nine stars, and every one of them is hiding something for you.</p>
-    <div style="margin-top:12px"><button class="pill" id="foundPill">✦ <span id="foundText">0 of 9 found</span></button></div>
+    <div class="pills"><button class="pill" id="foundPill">✦ <span id="foundText">0 of 9 found</span></button><button class="pill soft" id="secretPill">✧ <span id="secretText">0 of 10 secrets</span></button></div>
   </div>
-  <div class="map" id="map"><svg id="mapLines"></svg></div>
+  <div class="map" id="map">
+    <svg class="crown" id="crown" aria-hidden="true"></svg>
+    <svg id="mapLines" aria-hidden="true"></svg>
+    <svg id="mapPulse" aria-hidden="true"></svg>
+    <button class="tiny" id="tiny" aria-label="a tiny star"><i></i><small>24 · 12 · 2006</small></button>
+  </div>
   <div class="homeHint" id="homeHint">tap a star</div>
 </section>
 
@@ -556,29 +610,172 @@ function fxLoop() {
 function show(n = 6) { for (let i = 0; i < n; i++) setTimeout(() => rocket(rand(innerWidth * .15, innerWidth * .85), rand(innerHeight * .12, innerHeight * .45)), i * 280); }
 
 
-/* ---------- the living sky: stars, twinkles, a shooting star now and then ---------- */
+const SECRET_IDS = ['wish', 'moon', 'star10', 'ps', 'frosting', 'hades'];
+/* ---------- the living sky: nebula, stars that notice her finger, dust, shooting stars ---------- */
 const Sky = (() => {
-  const cv = $('#sky'), ctx = cv.getContext('2d'); let W, H, base, tw = [], shoot = null, raf = 0, last = 0;
+  const cv = $('#sky'), ctx = cv.getContext('2d');
+  let W = 0, H = 0, dpr = 1, base, neb, tw = [], near = [], motes = [], shoots = [], trail = [], raf = 0, last = 0, mode = 'calm', nextShoot = 0;
+  const touch = { x: -999, y: -999, a: 0, on: false };
+
+  // soft value noise for the nebula
+  function noise2(seed) {
+    let s = seed; const r = () => (s = (s * 16807) % 2147483647) / 2147483647;
+    const p = new Uint8Array(512), g = new Float32Array(256);
+    for (let i = 0; i < 256; i++) { p[i] = i; g[i] = r(); }
+    for (let i = 255; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [p[i], p[j]] = [p[j], p[i]]; }
+    for (let i = 0; i < 256; i++) p[i + 256] = p[i];
+    const h = (x, y) => g[p[p[x & 255] + (y & 255)]];
+    return (x, y) => {
+      const xi = Math.floor(x), yi = Math.floor(y), xf = x - xi, yf = y - yi, u = xf * xf * (3 - 2 * xf), v = yf * yf * (3 - 2 * yf);
+      const a = h(xi, yi), b = h(xi + 1, yi), c = h(xi, yi + 1), d = h(xi + 1, yi + 1);
+      return a + (b - a) * u + (c - a) * v + (a - b - c + d) * u * v;
+    };
+  }
+  function makeNebula() {
+    const n1 = noise2(1312), n2 = noise2(2412), fbm = (n, x, y) => { let s = 0, a = .5; for (let o = 0; o < 5; o++) { s += a * n(x, y); x *= 2.03; y *= 2.03; a *= .5; } return s; };
+    const w = 120, h = Math.max(160, Math.round(120 * H / W)), c = document.createElement('canvas'); c.width = w; c.height = h;
+    const x = c.getContext('2d'), img = x.createImageData(w, h), D = img.data;
+    const ang = -24 * Math.PI / 180, ca = Math.cos(ang), sa = Math.sin(ang);
+    for (let j = 0; j < h; j++) for (let i = 0; i < w; i++) {
+      const u = i / w * 3.2, v = j / w * 3.2;
+      const q = fbm(n1, u + 1.7, v + 9.2), d = fbm(n1, u + 1.8 * q, v + 1.8 * q), m = fbm(n2, u * 1.3 + 4, v * 1.3);
+      // the cloud gathers along a band across the sky, like a faint milky way
+      const bx = i / w - .5, by = (j / h - .32) * h / w, off = -bx * sa + by * ca, band = Math.exp(-off * off / .05);
+      const dens = Math.max(0, Math.min(1, (d - .42) / .38)) * (.25 + .75 * band);
+      const gold = Math.max(0, (m - .55) * 3) * band;
+      const k = (j * w + i) * 4;
+      D[k] = 122 + (224 - 122) * m + 60 * gold; D[k + 1] = 28 + 70 * m + 110 * gold; D[k + 2] = 52 + 70 * m + 40 * gold;
+      D[k + 3] = Math.min(255, dens * dens * 190 + gold * 30);
+    }
+    x.putImageData(img, 0, 0); return c;
+  }
   function build() {
-    const dpr = Math.min(devicePixelRatio || 1, 2); W = innerWidth; H = innerHeight;
+    dpr = Math.min(devicePixelRatio || 1, 2); W = innerWidth; H = innerHeight;
     cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     base = document.createElement('canvas'); base.width = W * dpr; base.height = H * dpr; const b = base.getContext('2d'); b.scale(dpr, dpr);
     const n = Math.round(W * H / 1500);
     for (let i = 0; i < n; i++) { const r = Math.random() < .92 ? rand(.3, 1.1) : rand(1.2, 1.9); b.globalAlpha = rand(.2, .9); b.fillStyle = Math.random() < .2 ? '#f6e2b0' : '#fff6ea'; b.beginPath(); b.arc(rand(0, W), Math.pow(Math.random(), 1.3) * H * .92, r, 0, 7); b.fill(); }
     tw = Array.from({ length: 46 }, () => ({ x: rand(0, W), y: Math.pow(Math.random(), 1.2) * H * .85, r: rand(1, 2.2), p: rand(0, 6.3), s: rand(.8, 2.4) }));
+    near = Array.from({ length: Math.round(W * H / 3600) }, () => ({ x: rand(0, W), y: rand(0, H * .95), ox: 0, oy: 0, vx: 0, vy: 0, r: rand(.7, 1.5), glow: 0, p: rand(0, 6.3), gold: Math.random() < .35 }));
+    motes = Array.from({ length: 30 }, () => ({ x: rand(0, W), y: rand(0, H), s: rand(.6, 1.8), vy: -rand(4, 11), ph: rand(0, 6.3), a: rand(.12, .38), rose: Math.random() < .3 }));
+    neb = makeNebula();
   }
+
+  function spawnShoot(now) {
+    const fromLeft = Math.random() < .35, sp = mode === 'home' ? rand(240, 330) : rand(520, 700), ang = rand(.32, .62);
+    shoots.push({ x: fromLeft ? rand(-40, W * .4) : rand(W * .6, W + 40), y: rand(-10, H * .35), vx: Math.cos(ang) * sp * (fromLeft ? 1 : -1), vy: Math.sin(ang) * sp, life: 1, dur: mode === 'home' ? rand(1.5, 2.1) : 1 });
+    nextShoot = now + (mode === 'home' ? rand(3200, 6500) : rand(9000, 16000));
+  }
+
   function loop(now) {
     raf = requestAnimationFrame(loop);
-    if (now - last < 33 || document.hidden || document.documentElement.classList.contains('game-on')) return; last = now;
-    ctx.clearRect(0, 0, W, H); ctx.drawImage(base, 0, 0, W, H);
-    for (const s of tw) { const a = .5 + .5 * Math.sin(now / 1000 * s.s + s.p); ctx.globalAlpha = a; ctx.fillStyle = '#fff3d6'; ctx.beginPath(); ctx.arc(s.x, s.y, s.r * (.7 + a * .5), 0, 7); ctx.fill(); if (a > .92) { ctx.globalAlpha = (a - .92) * 8; ctx.fillRect(s.x - 6, s.y - .5, 12, 1); ctx.fillRect(s.x - .5, s.y - 6, 1, 12); } }
-    if (!shoot && Math.random() < .004) shoot = { x: rand(W * .2, W), y: rand(0, H * .4), vx: -rand(7, 11), vy: rand(2.5, 4), life: 1 };
-    if (shoot) { const s = shoot; s.x += s.vx; s.y += s.vy; s.life -= .03; const g = ctx.createLinearGradient(s.x, s.y, s.x - s.vx * 9, s.y - s.vy * 9); g.addColorStop(0, `rgba(255,243,214,${s.life})`); g.addColorStop(1, 'rgba(255,243,214,0)'); ctx.globalAlpha = 1; ctx.strokeStyle = g; ctx.lineWidth = 1.6; ctx.beginPath(); ctx.moveTo(s.x, s.y); ctx.lineTo(s.x - s.vx * 9, s.y - s.vy * 9); ctx.stroke(); if (s.life <= 0) shoot = null; }
-    ctx.globalAlpha = 1;
+    if (mode === 'off' || document.hidden || document.documentElement.classList.contains('game-on')) return;
+    if (mode !== 'home' && now - last < 32) return;
+    const dt = Math.min(.05, (now - (last || now)) / 1000); last = now; const t = now / 1000;
+    ctx.clearRect(0, 0, W, H);
+    // nebula, drifting very slowly
+    const dx = Math.sin(t * .021) * W * .03, dy = Math.cos(t * .017) * H * .02;
+    ctx.globalAlpha = mode === 'home' ? .95 : .7; ctx.imageSmoothingEnabled = true;
+    ctx.drawImage(neb, -W * .06 + dx, -H * .04 + dy, W * 1.12, H * 1.08);
+    ctx.globalAlpha = 1; ctx.drawImage(base, 0, 0, W, H);
+    for (const s of tw) { const a = .5 + .5 * Math.sin(t * s.s + s.p); ctx.globalAlpha = a; ctx.fillStyle = '#fff3d6'; ctx.beginPath(); ctx.arc(s.x, s.y, s.r * (.7 + a * .5), 0, 7); ctx.fill(); if (a > .92) { ctx.globalAlpha = (a - .92) * 8; ctx.fillRect(s.x - 6, s.y - .5, 12, 1); ctx.fillRect(s.x - .5, s.y - 6, 1, 12); } }
+    // stars near her finger brighten and lean away a little, then settle back
+    touch.a += ((touch.on ? 1 : 0) - touch.a) * Math.min(1, dt * (touch.on ? 10 : 2.5));
+    ctx.globalCompositeOperation = 'lighter';
+    for (const s of near) {
+      const hx = s.x - touch.x, hy = s.y - touch.y, d2 = hx * hx + hy * hy, R = 110, f = touch.a * Math.exp(-d2 / (R * R));
+      if (f > .002) { const d = Math.sqrt(d2) || 1; s.vx += hx / d * f * 260 * dt; s.vy += hy / d * f * 260 * dt; }
+      s.vx += -s.ox * 18 * dt; s.vy += -s.oy * 18 * dt; s.vx *= Math.pow(.02, dt); s.vy *= Math.pow(.02, dt); s.ox += s.vx * dt; s.oy += s.vy * dt;
+      s.glow += (f * 2.2 - s.glow) * Math.min(1, dt * 6);
+      const x = s.x + s.ox, y = s.y + s.oy, a = .35 + .25 * Math.sin(t * 1.3 + s.p) + Math.min(.6, s.glow);
+      ctx.globalAlpha = Math.min(1, a); ctx.fillStyle = s.gold ? '#f6e2b0' : '#fff6ea';
+      ctx.beginPath(); ctx.arc(x, y, s.r * (1 + s.glow * .9), 0, 7); ctx.fill();
+      if (s.glow > .08) { ctx.globalAlpha = Math.min(.5, s.glow * .35); ctx.beginPath(); ctx.arc(x, y, s.r * 5 * (1 + s.glow), 0, 7); ctx.fill(); }
+    }
+    if (touch.a > .02 && touch.x > -900) { const g = ctx.createRadialGradient(touch.x, touch.y, 0, touch.x, touch.y, 90); g.addColorStop(0, `rgba(246,226,176,${.1 * touch.a})`); g.addColorStop(1, 'rgba(246,226,176,0)'); ctx.globalAlpha = 1; ctx.fillStyle = g; ctx.fillRect(touch.x - 90, touch.y - 90, 180, 180); }
+    // dust drifting up through the sky (home only)
+    if (mode === 'home') for (const m of motes) {
+      m.y += m.vy * dt; m.x += Math.sin(t * .6 + m.ph) * 6 * dt; if (m.y < -10) { m.y = H + 10; m.x = rand(0, W); }
+      ctx.globalAlpha = m.a * (.6 + .4 * Math.sin(t * 1.7 + m.ph)); ctx.fillStyle = m.rose ? '#e0607f' : '#d8b06a';
+      ctx.beginPath(); ctx.arc(m.x, m.y, m.s, 0, 7); ctx.fill(); ctx.globalAlpha *= .25; ctx.beginPath(); ctx.arc(m.x, m.y, m.s * 4, 0, 7); ctx.fill();
+    }
+    // shooting stars; on her sky they are slow enough to catch
+    if (now > nextShoot) spawnShoot(now);
+    for (const s of shoots) {
+      s.x += s.vx * dt; s.y += s.vy * dt; s.life -= dt / s.dur;
+      const L = mode === 'home' ? .55 : .3, tx = s.x - s.vx * L, ty = s.y - s.vy * L, a = Math.min(1, s.life * 2.5) * Math.min(1, (1 - s.life) * 6);
+      const g = ctx.createLinearGradient(s.x, s.y, tx, ty); g.addColorStop(0, `rgba(255,243,214,${a})`); g.addColorStop(1, 'rgba(255,243,214,0)');
+      ctx.globalAlpha = 1; ctx.strokeStyle = g; ctx.lineWidth = 1.8; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(s.x, s.y); ctx.lineTo(tx, ty); ctx.stroke();
+      const hg = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, 10); hg.addColorStop(0, 'rgba(255,248,230,.55)'); hg.addColorStop(1, 'rgba(255,248,230,0)'); ctx.globalAlpha = a; ctx.fillStyle = hg; ctx.fillRect(s.x - 10, s.y - 10, 20, 20); ctx.fillStyle = '#fff8e6'; ctx.beginPath(); ctx.arc(s.x, s.y, 2, 0, 7); ctx.fill();
+      if (mode === 'home' && Math.random() < .5) trail.push({ x: s.x, y: s.y, vx: rand(-14, 14), vy: rand(-6, 22), life: 1 });
+    }
+    shoots = shoots.filter(s => s.life > 0 && s.x > -80 && s.x < W + 80 && s.y < H + 80);
+    for (const p of trail) { p.x += p.vx * dt; p.y += p.vy * dt; p.life -= dt * 1.6; ctx.globalAlpha = Math.max(0, p.life) * .8; ctx.fillStyle = '#f6e2b0'; ctx.fillRect(p.x - .7, p.y - .7, 1.4, 1.4); }
+    trail = trail.filter(p => p.life > 0);
+    ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
   }
+  const setTouch = (e, on) => { touch.x = e.clientX; touch.y = e.clientY; if (on != null) touch.on = on; };
+  addEventListener('pointerdown', e => setTouch(e, true), { passive: true });
+  addEventListener('pointermove', e => { if (touch.on || e.pointerType === 'mouse') setTouch(e, e.pointerType === 'mouse' ? true : null); }, { passive: true });
+  addEventListener('pointerup', () => touch.on = false, { passive: true });
+  addEventListener('pointercancel', () => touch.on = false, { passive: true });
   build(); addEventListener('resize', build); raf = requestAnimationFrame(loop);
-  return { build };
+  return {
+    build, get shooting() { return shoots.map(s => ({ x: s.x, y: s.y })); },
+    mode(m) { if (m !== mode) { mode = m; last = 0; nextShoot = performance.now() + (m === 'home' ? 1800 : 6000); shoots = []; } },
+    // did her tap land on a shooting star? if so it's caught
+    catchAt(x, y) {
+      for (const s of shoots) {
+        const L = .55, tx = s.x - s.vx * L, ty = s.y - s.vy * L, vx = s.x - tx, vy = s.y - ty, k = Math.max(0, Math.min(1, ((x - tx) * vx + (y - ty) * vy) / (vx * vx + vy * vy)));
+        const px = tx + vx * k, py = ty + vy * k;
+        if (Math.hypot(x - px, y - py) < 40 && s.life > .05) { const at = { x: s.x, y: s.y }; s.life = 0; return at; }
+      }
+      return null;
+    }
+  };
 })();
+
+
+/* ---------- hidden surprises, ten of them tucked around the site ---------- */
+const SECRETS = [
+  ['wish', 'A caught wish', "You caught a wish. It's saved for later.", "Some stars in your sky don't sit still. Be quick."],
+  ['moon', 'The moon', "The moon says you're showing off again.", 'Say hi to the moon.'],
+  ['star10', 'Your own star', "It's been up there since 24 December 2006.", 'One star in your sky has no lines. Find it.'],
+  ['initials', 'Carved in the desk', 'Some things only show up in the dark.', 'The poetry desk has a candle. Mind the flame.'],
+  ['star21', 'Star 21', 'There were always 21.', "An empty jar isn't always empty."],
+  ['ps', 'The secret P.S.', 'You read all of it. Of course you did.', 'At the end of the letter, touch his name.'],
+  ['frosting', 'Extra frosting', 'Extra frosting for the birthday girl.', 'The cake knows your name. Tap it. A lot.'],
+  ['hades', 'Hades, cracked', "Fine. I like you. Don't tell Percy.", 'Hades is hard to impress. Keep trying.'],
+  ['percy', "Percy's moon jump", 'MAMA I TOUCHED THE MOON', 'Percy wants to go higher. Help him, fast.'],
+  ['board', 'More somedays', 'More flights on the board. All of them on time.', 'Departure boards have more than one flight.']
+].filter(s => typeof SECRET_IDS === 'undefined' || SECRET_IDS.includes(s[0]));
+const SECRET_WORD = { 6: 'six', 10: 'ten' }[SECRETS.length] || String(SECRETS.length);
+function toast(html, ms = 4600) {
+  $$('.toast').forEach(t => t.remove());
+  const t = document.createElement('div'); t.className = 'toast'; t.innerHTML = html; document.body.appendChild(t);
+  const bye = () => { t.classList.add('out'); setTimeout(() => t.remove(), 500); };
+  setTimeout(bye, ms);
+}
+const Secrets = (() => {
+  const got = new Set(store.get('secrets', []).filter(id => SECRETS.some(s => s[0] === id)));
+  function paint() { const el = $('#secretText'); if (el) el.textContent = got.size === SECRETS.length ? `all ${SECRETS.length} secrets` : `${got.size} of ${SECRETS.length} secrets`; }
+  function find(id, at) {
+    if (got.has(id)) return false;
+    got.add(id); store.set('secrets', [...got]); paint();
+    const s = SECRETS.find(x => x[0] === id);
+    toast(`<small>✧ secret ${got.size} of ${SECRETS.length}</small><b>${s[1]}</b><p>${s[2]}</p>`);
+    if (at) firework(at.x, at.y, .55);
+    if (got.size === SECRETS.length) setTimeout(() => { toast(`<small>✧ all ${SECRET_WORD}</small><b>Every secret, found.</b><p>Nothing gets past you, princess.</p>`, 6500); show(8); }, 5000);
+    return true;
+  }
+  function open() {
+    const m = document.createElement('div'); m.className = 'modal';
+    m.innerHTML = `<div class="secrets"><button class="close" aria-label="close">×</button><p class="eyebrow">✧ ${got.size} of ${SECRETS.length} found</p><h2 class="title">Secrets</h2><p class="sub">${SECRET_WORD[0].toUpperCase() + SECRET_WORD.slice(1)} little things are hidden around your sky.</p><ul>${SECRETS.map(([id, t, msg, hint]) => got.has(id) ? `<li class="got"><b>${t}</b><span>${msg}</span></li>` : `<li><b>a secret</b><span>${hint}</span></li>`).join('')}</ul></div>`;
+    document.body.appendChild(m); $('.close', m).onclick = () => m.remove(); m.addEventListener('click', e => { if (e.target === m) m.remove(); });
+  }
+  return { find, open, paint, has: id => got.has(id) };
+})();
+
 
 function typeText(el, html, speed = 70, done) {
   const tmp = document.createElement('div'); tmp.innerHTML = html; const full = tmp.textContent; let i = 0;
@@ -594,6 +791,7 @@ function go(id) {
   $$('.screen').forEach(s => s.classList.add('hidden'));
   $$('.back,.topfade').forEach(b => b.remove());
   const el = $('#' + id); el.classList.remove('hidden'); el.scrollTop = 0; current = id;
+  Sky.mode(id === 'home' ? 'home' : 'calm');
   if (PANELS.includes(id)) {
     const f = document.createElement('div'); f.className = 'topfade'; el.appendChild(f);
     const b = document.createElement('button'); b.className = 'back'; b.textContent = '← back to the sky'; b.onclick = () => go('home'); el.appendChild(b);
@@ -656,143 +854,261 @@ keypad($('#dots'), $('#pad'), 4, (c, done) => {
 const HINTS = ['Hint: two birthdays, squished into one code. 🎂', 'Just the days, princess. His first, then yours.'];
 let hi = 0; $('#hadesHint').onclick = () => { $('#hintBubble').innerHTML = `<div class="bubble">${HINTS[hi++ % HINTS.length]}</div>`; };
 
-/* ---------- the opening: stars fall into a 3D heart (WebGL) ---------- */
+/* ---------- the opening: stars spiral into a glowing 3D heart (WebGL, with bloom) ---------- */
 const Heart = (() => {
   const cv = $('#heartGL'), glowEl = $('#heartGlow');
-  let gl = null, prog, N = 0, raf = 0, W = 0, H = 0, last = 0;
-  const U = {};
-  const S = { phase: 'idle', t0: 0, now: 0, rotY: 0, rotX: .18, spin: 0, tilt: 0, tapT: -9, ripT: -9, charge: 0, burstT: -1, beatPh: 0, onDone: null, alpha: 1 };
-  const P = { down: false, moved: false, x: 0, y: 0, sx: 0, sy: 0, t: 0, lastX: 0, lastY: 0, lastT: 0 };
+  let gl = null, raf = 0, W = 0, H = 0, last = 0, N = 0, level = 0, locked = false, ft = [], fn = 0;
+  let pP, pFade, pBlur, pComp, F = null, quad;
+  const U = {}, UF = {}, UB = {}, UC = {};
+  const S = { phase: 'idle', t0: 0, now: 0, rotY: 0, rotX: .18, spin: 0, tilt: 0, tapT: -1e9, ripT: -1e9, flashT: -1e9, aliveT: 0, charge: 0, beatPh: 0, ring: 0 };
+  const P = { down: false, moved: false, sx: 0, sy: 0, t: 0, lastX: 0, lastY: 0 };
 
   const VS = `
-attribute vec3 aHeart; attribute vec2 aStart; attribute vec4 aRnd; attribute vec3 aCol; attribute vec2 aSky;
-uniform float uForm, uTime, uRotY, uRotX, uF, uAspect, uBeat, uCharge, uBurst, uRise, uRip, uPx, uY;
-varying vec3 vCol; varying float vA;
+attribute vec3 aHeart; attribute vec2 aStart; attribute vec4 aRnd; attribute vec3 aCol; attribute vec2 aSky; attribute float aKind;
+uniform float uForm, uTime, uRotY, uRotX, uF, uAspect, uBeat, uCharge, uBurst, uRise, uRip, uPx, uY, uRing;
+varying vec3 vCol; varying float vA, vG;
 vec3 rY(vec3 p, float a){ float c=cos(a), s=sin(a); return vec3(c*p.x+s*p.z, p.y, -s*p.x+c*p.z); }
 vec3 rX(vec3 p, float a){ float c=cos(a), s=sin(a); return vec3(p.x, c*p.y-s*p.z, s*p.y+c*p.z); }
 void main(){
-  vec3 p = aHeart;
-  float r = length(p);
-  p *= 1.0 + .07*uBeat + .04*uCharge;
-  p += (aRnd.xyz-.5) * .05 * uCharge * sin(uTime*38. + aRnd.w*60.);
-  if (uRip >= 0.) { float w = r - uRip*1.9; p += normalize(p + 1e-4) * .09 * exp(-w*w/.012) * (1.-uRip); }
+  float ring = step(.5, aKind), er = 1.;
+  vec3 p;
+  if (ring > .5) {
+    float k = clamp((uRing - aRnd.w*.6) / .4, 0., 1.); er = k*k*(3.-2.*k);
+    float ang = aHeart.y + uTime*(.14 + .1*aRnd.y);
+    float rr = mix(.3, aHeart.x, er) * (1. + .03*uBeat);
+    p = vec3(cos(ang)*rr, aHeart.z, sin(ang)*rr);
+    p = rX(p, .5);
+    float c = cos(.3), s = sin(.3); p.xy = vec2(c*p.x - s*p.y, s*p.x + c*p.y);
+  } else {
+    p = aHeart * (1. + .07*uBeat + .04*uCharge);
+    p += (aRnd.xyz-.5) * .05 * uCharge * sin(uTime*38. + aRnd.w*60.);
+    float r = length(p);
+    if (uRip >= 0.) { float w = r - uRip*1.9; p += normalize(p + 1e-4) * .09 * exp(-w*w/.012) * (1.-uRip); }
+  }
   if (uBurst > 0.) { vec3 dir = normalize(p + (aRnd.xyz-.5)*.8 + 1e-4); p += dir * uBurst * (1.2 + aRnd.w*3.2); p.y -= .35*uBurst*uBurst; }
   p = rX(rY(p, uRotY), uRotX);
   float z = p.z + 3.2;
-  vec2 hp = vec2(p.x / uAspect, p.y) * (uF / z) + vec2(0., uY);
-  float d = clamp((uForm - aRnd.w*.55) / .45, 0., 1.), e = d*d*(3.-2.*d);
-  vec2 pos = mix(aStart, hp, e);
-  vec2 rel = pos - vec2(0., uY);
-  pos += vec2(-rel.y * uAspect, rel.x / uAspect) * e * (1.-e) * (1.6 + aRnd.x*1.6);
+  vec2 C = vec2(0., uY), asp = vec2(uAspect, 1.);
+  vec2 hp = vec2(p.x / uAspect, p.y) * (uF / z) + C;
+  // falling in: every star spirals in on its own curve, all turning the same way, like a little galaxy
+  float d = ring > .5 ? 1. : clamp((uForm - aRnd.w*.5) / .5, 0., 1.);
+  float e = d*d*(3.-2.*d), eo = 1. - (1.-d)*(1.-d)*(1.-d);
+  vec3 q = rX(aHeart, .18);
+  vec2 hs = vec2(q.x / uAspect, q.y) * (uF / (q.z + 3.2)) + C;
+  vec2 s = (aStart - C)*asp, t = (hs - C)*asp;
+  float as0 = atan(s.y, s.x), da = mod(atan(t.y, t.x) - as0 - .6, 6.2831853) + .6;
+  float ang = as0 + da*e, rad = mix(length(s), length(t), eo);
+  vec2 pos = C + vec2(cos(ang), sin(ang)) * rad / asp + (hp - hs) * e;
+  // after the burst everything drifts up and becomes the sky
   float k = clamp((uRise - aRnd.w*.35) / .65, 0., 1.), kr = k*k*(3.-2.*k);
   pos = mix(pos, aSky, kr);
   gl_Position = vec4(pos, 0., 1.);
   float tw = .55 + .45*sin(uTime*(1.2 + aRnd.y*2.5) + aRnd.z*30.);
   float depth = clamp(3.6 / z - .55, .25, 1.4);
-  float formed = mix(.8 + aRnd.y*1.6, (1.1 + aRnd.y*1.5) * depth * (1. + .35*uBeat + .5*uCharge), e);
-  gl_PointSize = uPx * mix(formed, 1.1 + aRnd.y, kr);
+  float formed = mix(.8 + aRnd.y*1.6, (1.1 + aRnd.y*1.5) * depth * (1. + .35*uBeat + .5*uCharge), e) * (1. - .25*ring);
+  float g = (1.-ring) * step(.972, aRnd.y) * pow(max(0., sin(uTime*(.45 + aRnd.x*.8) + aRnd.w*40.)), 28.) * e * (1.-kr) * (1.-min(uBurst, 1.));
+  vG = g;
+  gl_PointSize = uPx * mix(formed, 1.1 + aRnd.y, kr) * (1. + 4.*g);
   vCol = mix(vec3(1., .93, .8), aCol, e);
   vCol = mix(vCol, vec3(1., .9, .72), kr*.6);
   float idleA = aRnd.z < .1 ? .35 + .55*tw : 0.;
-  float flyA = mix(idleA, .7, smoothstep(0., .25, e));
+  float flyA = mix(idleA, .75, smoothstep(0., .25, e));
   vA = mix(flyA, (.55 + .45*tw) * depth * (1. + .5*uCharge), smoothstep(.6, 1., e));
+  if (ring > .5) vA = er * (.3 + .55*tw) * depth;
   vA = mix(vA, .5 + .5*tw, kr);
 }`;
-  const FS = `precision mediump float; varying vec3 vCol; varying float vA;
-void main(){ vec2 c = gl_PointCoord - .5; float d = length(c); float a = smoothstep(.5, 0., d); a = a*a; float core = smoothstep(.18, 0., d);
-  gl_FragColor = vec4((vCol*a + vec3(core*.5)) * vA, a*vA); }`;
+  const FS = `precision mediump float; varying vec3 vCol; varying float vA, vG; uniform float uGain;
+void main(){
+  vec2 c = gl_PointCoord - .5; float d = length(c) * (1. + 4.*vG);
+  float a = smoothstep(.5, 0., d); a *= a;
+  float core = smoothstep(.17, 0., d);
+  vec2 q = abs(c);
+  float st = vG * (exp(-q.x*46.)*exp(-q.y*7.) + exp(-q.y*46.)*exp(-q.x*7.));
+  vec3 col = vCol*a + vec3(core*.5) + vec3(1., .94, .82)*st*1.6;
+  gl_FragColor = vec4(col * vA * uGain, min(1., (a + st) * vA * uGain));
+}`;
+  const QV = `attribute vec2 aQ; varying vec2 vUv; void main(){ vUv = aQ*.5 + .5; gl_Position = vec4(aQ, 0., 1.); }`;
+  const FADE = `precision mediump float; uniform vec4 uC; void main(){ gl_FragColor = uC; }`;
+  const BLUR = `precision mediump float; varying vec2 vUv; uniform sampler2D uT; uniform vec2 uD;
+void main(){ vec4 c = texture2D(uT, vUv) * .227027;
+  c += (texture2D(uT, vUv + uD*1.384615) + texture2D(uT, vUv - uD*1.384615)) * .316216;
+  c += (texture2D(uT, vUv + uD*3.230769) + texture2D(uT, vUv - uD*3.230769)) * .070270;
+  gl_FragColor = c; }`;
+  const COMP = `precision mediump float; varying vec2 vUv; uniform sampler2D uA, uB, uC; uniform vec3 uS;
+void main(){ vec3 c = texture2D(uA, vUv).rgb*uS.x + texture2D(uB, vUv).rgb*uS.y + texture2D(uC, vUv).rgb*uS.z;
+  gl_FragColor = vec4(c, min(1., max(c.r, max(c.g, c.b)) * .6)); }`;
 
   // a classic 3D heart: (x^2 + 9/4 y^2 + z^2 - 1)^3 - x^2 z^3 - 9/80 y^2 z^3 = 0, z is "up"
-  const F = (x, y, z) => { const a = x * x + 2.25 * y * y + z * z - 1; return a * a * a - x * x * z * z * z - .1125 * y * y * z * z * z; };
-  function surface(dx, dy, dz) { let lo = 0, hi = 1.7; for (let i = 0; i < 22; i++) { const m = (lo + hi) / 2; F(dx * m, dy * m, dz * m) < 0 ? lo = m : hi = m; } return lo; }
-  const COL = { crimson: [.86, .16, .27], rose: [.96, .4, .52], deep: [.66, .07, .19], gold: [1, .78, .4], champ: [1, .9, .7] };
+  const Fh = (x, y, z) => { const a = x * x + 2.25 * y * y + z * z - 1; return a * a * a - x * x * z * z * z - .1125 * y * y * z * z * z; };
+  function surface(dx, dy, dz) { let lo = 0, hi = 1.7; for (let i = 0; i < 22; i++) { const m = (lo + hi) / 2; Fh(dx * m, dy * m, dz * m) < 0 ? lo = m : hi = m; } return lo; }
+  function gaussR() { let u = 0, v = 0; while (!u) u = Math.random(); while (!v) v = Math.random(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }
+  const sm = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
+  const COL = { deep: [.56, .04, .15], crimson: [.86, .13, .26], rose: [.98, .4, .53], blush: [1, .64, .73], gold: [1, .75, .36], champ: [1, .9, .7] };
+  const ATTR = [['aHeart', 3], ['aStart', 2], ['aRnd', 4], ['aCol', 3], ['aSky', 2], ['aKind', 1]];
 
   function build() {
-    const small = Math.min(innerWidth, innerHeight) < 600;
-    N = small ? 16000 : 24000;
-    const A = { aHeart: new Float32Array(N * 3), aStart: new Float32Array(N * 2), aRnd: new Float32Array(N * 4), aCol: new Float32Array(N * 3), aSky: new Float32Array(N * 2) };
+    const small = Math.min(innerWidth, innerHeight) < 600, NH = small ? 17000 : 25000, NR = small ? 2400 : 3400;
+    N = NH + NR;
+    const A = {}; ATTR.forEach(([k, s]) => A[k] = new Float32Array(N * s));
     for (let i = 0; i < N; i++) {
+      A.aRnd.set([Math.random(), Math.random(), Math.random(), Math.random()], i * 4);
+      A.aStart.set([rand(-1.08, 1.08), rand(-1.08, 1.08)], i * 2);
+      A.aSky.set([rand(-1, 1), 1 - 1.5 * Math.pow(Math.random(), 1.6)], i * 2);
+      if (Math.random() < NR / N) { // the ring of gold dust
+        A.aKind[i] = 1;
+        A.aHeart.set([1.3 + Math.abs(gaussR()) * .06 + (Math.random() < .15 ? Math.random() * .12 : 0), Math.random() * Math.PI * 2, gaussR() * .022], i * 3);
+        const g = Math.random(); A.aCol.set(g < .55 ? COL.gold : g < .88 ? COL.champ : COL.blush, i * 3);
+        continue;
+      }
       let dx, dy, dz, l; do { dx = rand(-1, 1); dy = rand(-1, 1); dz = rand(-1, 1); l = Math.hypot(dx, dy, dz); } while (l > 1 || l < .01);
       dx /= l; dy /= l; dz /= l;
       const R = surface(dx, dy, dz), shell = Math.random() < .84;
       const rr = shell ? R * (1 - Math.abs(gaussR()) * .025) : R * Math.cbrt(Math.random()) * .92;
-      // world: x right, y up (the heart's z), z towards the camera (the heart's y)
-      A.aHeart.set([dx * rr, dz * rr, dy * rr * 1.1], i * 3);
-      A.aStart.set([rand(-1.05, 1.05), rand(-1.05, 1.05)], i * 2);
-      A.aRnd.set([Math.random(), Math.random(), Math.random(), Math.random()], i * 4);
-      const g = Math.random();
-      const c = !shell ? (g < .5 ? COL.rose : COL.crimson) : g < .08 ? COL.gold : g < .12 ? COL.champ : g < .5 ? COL.crimson : g < .8 ? COL.rose : COL.deep;
+      const Y = dz * rr; // world: x right, y up (the heart's z), z towards the camera (the heart's y)
+      A.aHeart.set([dx * rr, Y, dy * rr * 1.1], i * 3);
+      // colour by height: deep at the tip, crimson through the middle, rose and gold over the top
+      const h = Math.min(1, Math.max(0, (Y + 1.05) / 2.25)), g = Math.random(), up = sm(.55, 1, h);
+      let c;
+      if (!shell) c = g < .55 ? COL.rose : g < .85 ? COL.crimson : COL.blush;
+      else if (g < .03 + .2 * up) c = COL.gold;
+      else if (g < .06 + .3 * up) c = COL.champ;
+      else { const t = h + gaussR() * .12; c = t < .3 ? COL.deep : t < .62 ? COL.crimson : COL.rose; }
       A.aCol.set(c, i * 3);
-      A.aSky.set([rand(-1, 1), rand(-.35, 1)], i * 2);
     }
-    for (const k in A) {
+    ATTR.forEach(([k, s], i) => {
       const b = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, b); gl.bufferData(gl.ARRAY_BUFFER, A[k], gl.STATIC_DRAW);
-      const loc = gl.getAttribLocation(prog, k), size = { aHeart: 3, aStart: 2, aRnd: 4, aCol: 3, aSky: 2 }[k];
-      gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, size, gl.FLOAT, false, 0, 0);
-    }
+      gl.enableVertexAttribArray(i); gl.vertexAttribPointer(i, s, gl.FLOAT, false, 0, 0);
+    });
+    quad = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, quad); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+    gl.enableVertexAttribArray(6); gl.vertexAttribPointer(6, 2, gl.FLOAT, false, 0, 0);
   }
-  function gaussR() { let u = 0, v = 0; while (!u) u = Math.random(); while (!v) v = Math.random(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }
 
   function init() {
     try { gl = cv.getContext('webgl', { premultipliedAlpha: true, antialias: false, alpha: true }); } catch (e) { gl = null; }
     if (!gl) return false;
     const sh = (t, src) => { const s = gl.createShader(t); gl.shaderSource(s, src); gl.compileShader(s); if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s)); return s; };
+    const prog = (vs, fs, attrs) => {
+      const p = gl.createProgram(); gl.attachShader(p, sh(gl.VERTEX_SHADER, vs)); gl.attachShader(p, sh(gl.FRAGMENT_SHADER, fs));
+      attrs.forEach(([n, loc]) => gl.bindAttribLocation(p, loc, n)); gl.linkProgram(p);
+      if (!gl.getProgramParameter(p, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(p)); return p;
+    };
+    try { pP = prog(VS, FS, ATTR.map(([n], i) => [n, i])); } catch (e) { console.warn(e); gl = null; return false; }
+    ['uForm', 'uTime', 'uRotY', 'uRotX', 'uF', 'uAspect', 'uBeat', 'uCharge', 'uBurst', 'uRise', 'uRip', 'uPx', 'uY', 'uRing', 'uGain'].forEach(n => U[n] = gl.getUniformLocation(pP, n));
     try {
-      prog = gl.createProgram(); gl.attachShader(prog, sh(gl.VERTEX_SHADER, VS)); gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, FS)); gl.linkProgram(prog);
-      if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(prog));
-    } catch (e) { console.warn(e); gl = null; return false; }
-    gl.useProgram(prog);
-    ['uForm', 'uTime', 'uRotY', 'uRotX', 'uF', 'uAspect', 'uBeat', 'uCharge', 'uBurst', 'uRise', 'uRip', 'uPx', 'uY'].forEach(n => U[n] = gl.getUniformLocation(prog, n));
+      pFade = prog(QV, FADE, [['aQ', 6]]); pBlur = prog(QV, BLUR, [['aQ', 6]]); pComp = prog(QV, COMP, [['aQ', 6]]);
+      UF.uC = gl.getUniformLocation(pFade, 'uC'); UB.uT = gl.getUniformLocation(pBlur, 'uT'); UB.uD = gl.getUniformLocation(pBlur, 'uD');
+      UC.uS = gl.getUniformLocation(pComp, 'uS');
+      gl.useProgram(pComp); gl.uniform1i(gl.getUniformLocation(pComp, 'uA'), 0); gl.uniform1i(gl.getUniformLocation(pComp, 'uB'), 1); gl.uniform1i(gl.getUniformLocation(pComp, 'uC'), 2);
+      gl.useProgram(pBlur); gl.uniform1i(UB.uT, 0);
+    } catch (e) { level = 2; locked = true; }
     build();
     gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE); gl.disable(gl.DEPTH_TEST);
     return true;
   }
+  function target(w, h) {
+    const t = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, t);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, w, h, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+    [[gl.TEXTURE_MIN_FILTER, gl.LINEAR], [gl.TEXTURE_MAG_FILTER, gl.LINEAR], [gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE], [gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE]].forEach(([k, v]) => gl.texParameteri(gl.TEXTURE_2D, k, v));
+    const f = gl.createFramebuffer(); gl.bindFramebuffer(gl.FRAMEBUFFER, f); gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, t, 0);
+    const ok = gl.checkFramebufferStatus(gl.FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE;
+    gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT); gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    return { t, f, w, h, ok };
+  }
   function size() {
     const dpr = Math.min(devicePixelRatio || 1, 2);
-    W = innerWidth; H = innerHeight; cv.width = W * dpr; cv.height = H * dpr; cv.style.width = W + 'px'; cv.style.height = H + 'px';
-    if (gl) gl.viewport(0, 0, cv.width, cv.height);
+    W = innerWidth; H = innerHeight; cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); cv.style.width = W + 'px'; cv.style.height = H + 'px';
+    if (!gl) return;
+    if (F) Object.values(F).forEach(o => { gl.deleteTexture(o.t); gl.deleteFramebuffer(o.f); });
+    F = null;
+    if (pComp) {
+      const w2 = Math.max(2, cv.width >> 1), h2 = Math.max(2, cv.height >> 1), w4 = Math.max(2, cv.width >> 2), h4 = Math.max(2, cv.height >> 2), w8 = Math.max(2, cv.width >> 3), h8 = Math.max(2, cv.height >> 3);
+      F = { A: target(w2, h2), B1: target(w4, h4), B2: target(w4, h4), C1: target(w8, h8), C2: target(w8, h8) };
+      if (!Object.values(F).every(o => o.ok)) { level = 2; locked = true; }
+    }
   }
   addEventListener('resize', () => { if (raf) size(); });
 
   const ease = k => k < 0 ? 0 : k > 1 ? 1 : k * k * (3 - 2 * k);
   function beatEnv(ph) { const a = ph / .065, b = (ph - .22) / .065; return Math.exp(-a * a) + .55 * Math.exp(-b * b); }
+  function pass(src, dst, dx, dy) {
+    gl.bindFramebuffer(gl.FRAMEBUFFER, dst.f); gl.viewport(0, 0, dst.w, dst.h);
+    gl.bindTexture(gl.TEXTURE_2D, src.t); gl.uniform2f(UB.uD, dx / src.w, dy / src.h); gl.drawArrays(gl.TRIANGLES, 0, 3);
+  }
 
   function frame(now) {
     raf = requestAnimationFrame(frame);
-    const dt = Math.min(.05, (now - (last || now)) / 1000); last = now; S.now = now;
+    const ms = last ? now - last : 16.7, dt = Math.min(.05, ms / 1000); last = now; S.now = now;
+    // if the phone can't keep up, quietly do a little less
+    if (!locked && S.phase !== 'idle' && ++fn > 20) { ft.push(ms); if (ft.length === 45) { const avg = ft.reduce((a, b) => a + b) / ft.length; ft = []; if (avg > 40 && level < 2) level++; } }
     const el = (now - S.t0) / 1000;
-    // spin: slow turn on its own, plus whatever her finger gave it
+    // spin: whatever her finger gave it, then it settles back to face her with a gentle sway
     S.rotY += dt * S.spin; S.spin *= Math.pow(.35, dt);
     if (!P.down && Math.abs(S.spin) < .8) { const home = Math.round(S.rotY / (Math.PI * 2)) * Math.PI * 2 + Math.sin(now / 1000 * .5) * .5; S.rotY += (home - S.rotY) * Math.min(1, dt * 1.6); }
     S.rotX += ((.18 + S.tilt) - S.rotX) * Math.min(1, dt * 4); if (!P.down) S.tilt *= Math.pow(.2, dt);
     // holding charges it
     if (P.down && !P.moved && S.phase === 'alive' && (now - P.t) > 260) S.charge = Math.min(1, S.charge + dt / 1.5); else if (!P.down) S.charge = Math.max(0, S.charge - dt * 2);
-    // heartbeat gets faster while charging
+    // the heartbeat quickens while charging
     S.beatPh += dt / (1.1 - .62 * S.charge);
-    const natural = S.phase === 'idle' || S.phase === 'forming' ? 0 : beatEnv((S.beatPh % 1) * 1.1);
-    const tapBeat = Math.exp(-Math.max(0, (now - S.tapT) / 1000) * 6) * ((now - S.tapT) < 900 ? 1 : 0);
-    const beat = Math.max(natural, tapBeat * 1.4);
-    const rip = (now - S.ripT) / 900;
-    let form = 0, burst = 0, rise = 0;
-    if (S.phase === 'forming') { form = Math.min(1.0, el / 3.2) * 1.0; if (el > 3.4) { S.phase = 'alive'; S.onAlive && S.onAlive(); } }
-    if (S.phase === 'alive') form = 1;
-    if (S.phase === 'burst') { form = 1; burst = Math.min(1.7, el * 1.15); rise = ease((el - .9) / 2.3); cv.style.opacity = el > 2.6 ? Math.max(0, 1 - (el - 2.6) / 1) : 1; if (el > 3.7) { stop(); S.onDone && S.onDone(); return; } }
-    const aspect = W / H, f = Math.min(.8 * 3.2 * aspect / 1.18, .55 * 3.2 / 1.15);
-    gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);
+    const natural = S.phase === 'alive' || S.phase === 'burst' ? beatEnv((S.beatPh % 1) * 1.1) : 0;
+    const since = now - S.tapT, tapBeat = since < 900 ? Math.exp(-since / 1000 * 6) : 0;
+    const beat = Math.max(natural, tapBeat * 1.4), rip = (now - S.ripT) / 900, flash = now >= S.flashT ? Math.exp(-(now - S.flashT) / 520) : 0;
+    let form = 0, burst = 0, rise = 0, trail = 0;
+    if (S.phase === 'forming') {
+      form = Math.min(1, el / 3.4); trail = .9 * (1 - ease((el - 2.3) / 1.2));
+      if (el > 3.6) { S.phase = 'alive'; S.aliveT = now; S.ripT = now; S.tapT = now; S.flashT = now; S.onAlive && S.onAlive(); }
+    }
+    if (S.phase === 'alive') { form = 1; S.ring = ease((now - S.aliveT) / 3200); }
+    if (S.phase === 'burst') {
+      form = 1; burst = Math.min(1.7, el * 1.15); rise = ease((el - .9) / 2.3); trail = .9 * (1 - ease((el - 1.1) / .9));
+      cv.style.opacity = el > 2.6 ? Math.max(0, 1 - (el - 2.6) / 1) : 1;
+      if (el > 3.7) { stop(); S.onDone && S.onDone(); return; }
+    }
+    const aspect = W / H, f = Math.min(2 * aspect, 1.5), dpr = Math.min(devicePixelRatio || 1, 2), cnt = level ? Math.round(N * .62) : N;
+    gl.useProgram(pP);
     gl.uniform1f(U.uForm, form); gl.uniform1f(U.uTime, now / 1000); gl.uniform1f(U.uRotY, S.rotY); gl.uniform1f(U.uRotX, S.rotX);
     gl.uniform1f(U.uF, f); gl.uniform1f(U.uAspect, aspect); gl.uniform1f(U.uBeat, beat); gl.uniform1f(U.uCharge, S.charge);
     gl.uniform1f(U.uBurst, burst); gl.uniform1f(U.uRise, rise); gl.uniform1f(U.uRip, rip >= 0 && rip < 1 ? rip : -1);
-    gl.uniform1f(U.uPx, Math.min(devicePixelRatio || 1, 2) * 2); gl.uniform1f(U.uY, .2);
-    gl.drawArrays(gl.POINTS, 0, N);
+    gl.uniform1f(U.uY, .2); gl.uniform1f(U.uRing, S.ring);
+    const bloom = level < 2 && F;
+    if (bloom) {
+      // a soft copy at half size that keeps fading trails behind every moving star
+      gl.bindFramebuffer(gl.FRAMEBUFFER, F.A.f); gl.viewport(0, 0, F.A.w, F.A.h);
+      if (trail > 0) {
+        gl.useProgram(pFade); gl.uniform4f(UF.uC, 2 / 255, 2 / 255, 2 / 255, trail);
+        gl.blendEquation(gl.FUNC_REVERSE_SUBTRACT); gl.blendFunc(gl.ONE, gl.SRC_ALPHA); gl.drawArrays(gl.TRIANGLES, 0, 3);
+        gl.blendEquation(gl.FUNC_ADD); gl.blendFunc(gl.ONE, gl.ONE); gl.useProgram(pP);
+      } else { gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT); }
+      gl.uniform1f(U.uPx, dpr); gl.uniform1f(U.uGain, S.phase === 'forming' ? .5 + .4 * form * form : .9 - .6 * rise);
+      gl.drawArrays(gl.POINTS, 0, cnt);
+      // blur it twice over, at a quarter and an eighth of the size: that is the glow
+      gl.disable(gl.BLEND); gl.useProgram(pBlur); gl.activeTexture(gl.TEXTURE0);
+      pass(F.A, F.B1, 0, 0); pass(F.B1, F.B2, 1, 0); pass(F.B2, F.B1, 0, 1);
+      pass(F.B1, F.C1, 0, 0); pass(F.C1, F.C2, 1, 0); pass(F.C2, F.C1, 0, 1);
+      gl.enable(gl.BLEND); gl.useProgram(pP);
+    }
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null); gl.viewport(0, 0, cv.width, cv.height);
+    gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.uniform1f(U.uPx, dpr * 2); gl.uniform1f(U.uGain, 1);
+    gl.drawArrays(gl.POINTS, 0, cnt);
+    if (bloom) {
+      gl.useProgram(pComp);
+      gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, F.A.t);
+      gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, F.B1.t);
+      gl.activeTexture(gl.TEXTURE2); gl.bindTexture(gl.TEXTURE_2D, F.C1.t);
+      const fade = 1 - .8 * rise;
+      gl.uniform3f(UC.uS, .45 + trail * .3, (.95 + .6 * beat + .8 * S.charge + 1.5 * flash) * fade, (.85 + .45 * beat + 1.1 * S.charge + 1.3 * flash) * fade);
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
+      gl.bindTexture(gl.TEXTURE_2D, null); gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, null); gl.activeTexture(gl.TEXTURE0);
+    }
     if (S.onCharge) S.onCharge(S.charge);
-    glowEl.style.opacity = Math.min(1, (form > .7 ? (form - .7) / .3 : 0) * (.55 + .3 * beat + .45 * S.charge) * (S.phase === 'burst' ? Math.max(0, 1 - el) : 1));
+    glowEl.style.opacity = Math.min(1, (form > .7 ? (form - .7) / .3 : 0) * (.5 + .3 * beat + .45 * S.charge + .4 * flash) * (S.phase === 'burst' ? Math.max(0, 1 - el) : 1));
     glowEl.style.transform = `translate(-50%,-50%) scale(${1 + .08 * beat + .1 * S.charge})`;
   }
   function stop() { cancelAnimationFrame(raf); raf = 0; }
 
   // touch: drag spins it, a tap makes it beat, holding charges it and letting go bursts it
   cv.addEventListener('pointerdown', e => {
-    P.down = true; P.moved = false; P.x = P.sx = P.lastX = e.clientX; P.y = P.sy = P.lastY = e.clientY; P.t = P.lastT = S.now || performance.now();
+    P.down = true; P.moved = false; P.sx = P.lastX = e.clientX; P.sy = P.lastY = e.clientY; P.t = S.now || performance.now();
     try { cv.setPointerCapture(e.pointerId); } catch (er) {}
   });
   cv.addEventListener('pointermove', e => {
@@ -813,18 +1129,17 @@ void main(){ vec2 c = gl_PointCoord - .5; float d = length(c); float a = smooths
 
   function burst() {
     if (S.phase !== 'alive') return;
-    S.phase = 'burst'; S.t0 = performance.now(); S.charge = 0;
-    const cy = H * (.5 - .2 / 2);
-    firework(W / 2, cy, 1.8); setTimeout(() => show(8), 200);
+    S.phase = 'burst'; S.t0 = performance.now(); S.flashT = S.t0; S.charge = 0;
+    firework(W / 2, H * .4, 1.8); setTimeout(() => show(8), 200);
     S.onBurst && S.onBurst();
   }
   return {
     start(h) {
-      Object.assign(S, { phase: 'idle', charge: 0, spin: 0, tilt: 0 }, h); cv.style.opacity = 1;
+      Object.assign(S, { phase: 'idle', charge: 0, spin: 0, tilt: 0, ring: 0, flashT: -1e9, tapT: -1e9, ripT: -1e9 }, h); cv.style.opacity = 1;
       if (!gl && !init()) return false;
-      size(); last = 0; stop(); raf = requestAnimationFrame(frame); return true;
+      size(); last = 0; fn = 0; ft = []; stop(); raf = requestAnimationFrame(frame); return true;
     },
-    burst, stop, get phase() { return S.phase; }
+    burst, stop, quality(l) { level = l; locked = true; }, get phase() { return S.phase; }, get level() { return level; }
   };
 })();
 
@@ -856,35 +1171,99 @@ const STARS = [
   ['poems', 'poetry corner', 13, 30], ['things', '20 things', 31, 52], ['letter', 'a letter', 50, 8], ['cake', 'cake', 69, 52], ['arcade', 'arcade', 87, 30],
   ['desserts', 'desserts', 84, 86], ['song', 'your song', 50, 97], ['cats', 'Hades & Percy', 16, 86], ['ticket', 'Venice', 50, 64]];
 const EDGES = [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 6], [6, 7], [7, 0], [1, 8], [8, 3]];
-let found = new Set(store.get('found', [])), justFound = new Set(), firstHome = false;
-function markFound(id) { if (!found.has(id)) { found.add(id); justFound.add(id); store.set('found', [...found]); } }
-function drawMap() {
+let found = new Set(store.get('found', [])), justFound = new Set(), firstHome = false, lastStar = null, skyOpened = false;
+function markFound(id) { lastStar = id; if (!found.has(id)) { found.add(id); justFound.add(id); store.set('found', [...found]); } }
+
+/* an old star-atlas engraving of a crown, drawn behind the constellation */
+function drawCrown(W, H) {
+  const P = (x, y) => [x / 100 * W, y / 100 * H], f = v => v.toFixed(1), pt = p => f(p[0]) + ' ' + f(p[1]);
+  const c = P(50, 58), inset = (p, d) => { const dx = c[0] - p[0], dy = c[1] - p[1], l = Math.hypot(dx, dy) || 1; return [p[0] + dx / l * d, p[1] + dy / l * d]; };
+  const top = [[13, 30], [31, 52], [50, 8], [69, 52], [87, 30]].map(p => P(...p));
+  const zig = d => 'M' + top.map(p => pt(inset(p, d))).join(' L');
+  const L = inset(P(16, 86), 6), R = inset(P(84, 86), 6);
+  const body = `${zig(7)} L${pt(R)} Q${pt(P(50, 106))} ${pt(L)} Z`;
+  const q = (a, b, k, t) => [(1 - t) * (1 - t) * a[0] + 2 * t * (1 - t) * k[0] + t * t * b[0], (1 - t) * (1 - t) * a[1] + 2 * t * (1 - t) * k[1] + t * t * b[1]];
+  const bTa = P(15.6, 75), bTb = P(84.4, 75), bTk = P(50, 90), mA = P(15.8, 80.5), mB = P(84.2, 80.5), mK = P(50, 98.5);
+  const band = `M${pt(bTa)} Q${pt(bTk)} ${pt(bTb)} L${pt(R)} Q${pt(P(50, 106))} ${pt(L)} Z`;
+  const jewel = (t, big) => { const [x, y] = q(mA, mB, mK, t); return big ? `<ellipse cx="${f(x)}" cy="${f(y)}" rx="6.5" ry="8.5"/><ellipse cx="${f(x)}" cy="${f(y)}" rx="3.2" ry="4.6"/><path d="M${f(x - 6.5)} ${f(y)} H${f(x + 6.5)} M${f(x)} ${f(y - 8.5)} V${f(y + 8.5)}" stroke-width=".5"/>` : `<path d="M${f(x)} ${f(y - 6)} L${f(x + 4.5)} ${f(y)} L${f(x)} ${f(y + 6)} L${f(x - 4.5)} ${f(y)} Z"/>`; };
+  const orb = (p, cross) => { const [x, y] = [p[0], p[1] - 17]; return `<circle cx="${f(x)}" cy="${f(y)}" r="3.4"/><path d="M${f(x)} ${f(y + 3.4)} V${f(y + 9)}"/>` + (cross ? `<path d="M${f(x)} ${f(y - 3.4)} V${f(y - 12)} M${f(x - 3.5)} ${f(y - 8.5)} H${f(x + 3.5)}"/>` : ''); };
+  const arch = (a, b, k) => `M${pt(a)} Q${pt(k)} ${pt(b)}`;
+  return `<defs><pattern id="hatchA" width="4.5" height="4.5" patternUnits="userSpaceOnUse" patternTransform="rotate(20)"><path d="M0 0 V4.5" stroke="#d8b06a" stroke-width=".55"/></pattern><pattern id="hatchB" width="4.5" height="4.5" patternUnits="userSpaceOnUse" patternTransform="rotate(-24)"><path d="M0 0 V4.5" stroke="#d8b06a" stroke-width=".5"/></pattern><linearGradient id="shadeG"><stop offset="0" stop-color="#fff"/><stop offset=".36" stop-color="#fff" stop-opacity="0"/><stop offset=".7" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#fff" stop-opacity=".7"/></linearGradient><mask id="shadeM" maskContentUnits="userSpaceOnUse"><rect width="${W}" height="${H * 1.1}" fill="url(#shadeG)"/></mask><path id="bandMid" d="M${pt(mA)} Q${pt(mK)} ${pt(mB)}"/></defs>
+<g fill="none" stroke="#d8b06a" stroke-width=".8" stroke-linejoin="round">
+<path d="${body}" fill="url(#hatchA)" stroke="none" mask="url(#shadeM)"/>
+<path d="${band}" fill="url(#hatchB)" stroke="none" opacity=".8"/>
+<path d="${body}"/>
+<path d="${zig(13)}" stroke-dasharray="0 6.5" stroke-linecap="round" stroke-width="2.3"/>
+<path d="M${pt(bTa)} Q${pt(bTk)} ${pt(bTb)}"/><path d="M${pt(inset(bTa, -4))} Q${pt([bTk[0], bTk[1] - 4])} ${pt(inset(bTb, -4))}" stroke-width=".5"/>
+<path d="M${pt(L)} Q${pt(P(50, 106))} ${pt(R)}" stroke-dasharray="0 6" stroke-linecap="round" stroke-width="2" transform="translate(0 -5)"/>
+<path d="${arch(inset(top[0], 9), q(bTa, bTb, bTk, .14), P(17, 60))}" stroke-width=".6"/><path d="${arch(inset(top[4], 9), q(bTa, bTb, bTk, .86), P(83, 60))}" stroke-width=".6"/>
+<path d="M${pt(inset(top[2], 10))} L${pt(P(50, 59))} M${pt(P(50, 69.5))} L${pt(q(bTa, bTb, bTk, .5))}" stroke-width=".6"/>
+${jewel(.1, true)}${jewel(.9, true)}${jewel(.21)}${jewel(.79)}
+${orb(top[0])}${orb(top[2], true)}${orb(top[4])}
+<text font-family="IM Fell English" font-size="9" letter-spacing="1.6" fill="#d8b06a" stroke="none" dy="3"><textPath href="#bandMid" startOffset="50%" text-anchor="middle">CORONA · ISHMAIRAE</textPath></text>
+</g>`;
+}
+/* anim 'open': every lit line connects again, one after another (each time the site opens)
+   anim 'back': the star she just came back from lights up and its lines connect again (every visit, not only the first)
+   no anim: a quiet redraw */
+function drawMap(anim) {
   const map = $('#map'); $$('.star', map).forEach(s => s.remove());
-  STARS.forEach(([id, label, x, y]) => {
-    const b = document.createElement('button'); b.className = 'star ' + (found.has(id) ? 'on' : 'off') + (justFound.has(id) ? ' just' : '');
+  const W = map.clientWidth, H = map.clientHeight, n = found.size;
+  const back = anim === 'back' ? STARS.findIndex(s => s[0] === lastStar) : -1, light = {};
+  let lines = '', pulses = '', k = 0, end = 0;
+  EDGES.forEach(([a, c]) => {
+    const on = found.has(STARS[a][0]) && found.has(STARS[c][0]);
+    let ia = a, ib = c, d = -1;
+    if (on && anim === 'open') d = .35 + k++ * .3;
+    if (on && back >= 0 && (a === back || c === back)) { d = .35; if (c === back) [ia, ib] = [c, a]; } // light travels out from the star she just opened
+    const A = STARS[ia], B = STARS[ib], x1 = A[2] / 100 * W, y1 = A[3] / 100 * H, x2 = B[2] / 100 * W, y2 = B[3] / 100 * H, len = Math.hypot(x2 - x1, y2 - y1).toFixed(1);
+    if (!on) { lines += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="rgba(246,226,176,.13)" stroke-width="1" stroke-dasharray="2 7"/>`; return; }
+    pulses += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" class="pulse" style="--len:${len}px;animation-duration:${(len / 38).toFixed(1)}s;animation-delay:-${rand(0, 6).toFixed(1)}s" stroke="#fff3d6" stroke-width="2" stroke-linecap="round" stroke-dasharray="18 ${len}" opacity=".75"/>`;
+    if (d >= 0) { light[ia] = Math.min(light[ia] ?? 99, d); light[ib] = Math.min(light[ib] ?? 99, d + 1.1); end = Math.max(end, d + 1.4); }
+    const delay = d >= 0 ? `;animation-delay:${d.toFixed(2)}s` : '';
+    lines += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" class="${d >= 0 ? 'draw' : ''}" style="--len:${len}px${delay}" stroke="var(--line)" stroke-width="1.6" filter="url(#lineGlow)"/>` +
+      (d >= 0 ? `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" class="comet" style="--len:${len}px${delay}" stroke="#fff8e6" stroke-width="3.2" stroke-linecap="round" stroke-dasharray="14 ${(+len + 40).toFixed(0)}" filter="url(#lineGlow)"/>` : '');
+  });
+  if (back >= 0 && !(back in light)) light[back] = .25;
+  if (anim === 'open') STARS.forEach((s, i) => { if (found.has(s[0]) && !(i in light)) light[i] = .35; });
+  STARS.forEach(([id, label, x, y], i) => {
+    const b = document.createElement('button'); b.className = 'star ' + (found.has(id) ? 'on' : 'off') + (i in light ? ' just' : '');
+    if (i in light) b.style.setProperty('--d', light[i].toFixed(2) + 's');
     b.style.left = x + '%'; b.style.top = y + '%'; b.innerHTML = `<span class="core"></span><small>${label}</small>`; b.setAttribute('aria-label', label + (found.has(id) ? ', found' : ''));
     b.onclick = () => go(id); map.appendChild(b);
   });
-  const W = map.clientWidth, H = map.clientHeight;
-  $('#mapLines').innerHTML = EDGES.map(([a, c]) => {
-    const A = STARS[a], B = STARS[c], on = found.has(A[0]) && found.has(B[0]), fresh = on && (justFound.has(A[0]) || justFound.has(B[0]));
-    const x1 = A[2] / 100 * W, y1 = A[3] / 100 * H, x2 = B[2] / 100 * W, y2 = B[3] / 100 * H, len = Math.hypot(x2 - x1, y2 - y1);
-    return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" class="${fresh ? 'draw' : ''}" style="--len:${len}" stroke="${on ? 'var(--line)' : 'rgba(246,226,176,.12)'}" stroke-width="${on ? 1.6 : 1}" ${on ? 'filter="drop-shadow(0 0 4px #d8b06a)"' : 'stroke-dasharray="2 7"'}/>`;
-  }).join('');
-  const n = found.size;
+  const crown = $('#crown'); crown.innerHTML = drawCrown(W, H); crown.style.opacity = n === 9 ? '' : (.1 + n * .035).toFixed(3); crown.classList.toggle('full', n === 9);
+  $('#mapLines').innerHTML = `<defs><filter id="lineGlow" filterUnits="userSpaceOnUse" x="-20" y="-20" width="${W + 40}" height="${H + 40}"><feGaussianBlur stdDeviation="2.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>` + lines;
+  // the light running along the lines waits until everything has connected
+  const mp = $('#mapPulse'); mp.innerHTML = pulses; mp.classList.remove('wait');
+  if (end) { void mp.getBoundingClientRect(); mp.style.setProperty('--w', end.toFixed(2) + 's'); mp.classList.add('wait'); }
   $('#foundText').textContent = n === 9 ? 'all 9 found. see your name' : `${n} of 9 found`;
   $('#homeHint').textContent = n === 0 ? 'tap a star' : n === 9 ? 'every star is lit' : 'keep going, princess';
+  Secrets.paint();
 }
 window.on_home = () => {
-  drawMap();
+  const anim = !skyOpened ? 'open' : lastStar ? 'back' : null, id = lastStar, isNew = justFound.has(id);
+  skyOpened = true;
+  drawMap(anim);
   if (firstHome) { firstHome = false; confetti(70); }
-  if (justFound.size) { justFound.forEach(id => { const s = STARS.find(x => x[0] === id), m = $('#map').getBoundingClientRect(); setTimeout(() => firework(m.left + s[2] / 100 * m.width, m.top + s[3] / 100 * m.height, .35), 500); }); }
+  if (anim === 'back') { const s = STARS.find(x => x[0] === id), m = $('#map').getBoundingClientRect(); setTimeout(() => firework(m.left + s[2] / 100 * m.width, m.top + s[3] / 100 * m.height, isNew ? .35 : .22), 450); }
   const completedNow = found.size === 9 && !store.get('nameShown', false);
-  justFound.clear();
-  if (completedNow) setTimeout(playName, 1900);
+  justFound.clear(); lastStar = null;
+  if (completedNow) setTimeout(playName, anim === 'open' ? 4200 : 1900);
 };
 $('#foundPill').onclick = () => { if (found.size === 9) playName(); };
+$('#secretPill').onclick = () => Secrets.open();
 addEventListener('resize', () => { if (current === 'home') drawMap(); });
+/* the moon, and one tiny star nobody drew a line to */
+$('#moon').onclick = e => {
+  const m = $('#moon'); m.classList.remove('wob'); void m.offsetWidth; m.classList.add('wob');
+  const r = m.getBoundingClientRect(); Secrets.find('moon', { x: r.left + r.width / 2, y: r.top + r.height / 2 }) || toast('<b>The moon</b><p>still says you\'re showing off.</p>', 2600);
+};
+$('#tiny').onclick = () => {
+  const t = $('#tiny'); t.classList.add('lit'); const r = t.getBoundingClientRect();
+  Secrets.find('star10', { x: r.left + r.width / 2, y: r.top + r.height / 2 }) || toast('<b>Your own star</b><p>Since 24 December 2006.</p>', 2600);
+};
+if (Secrets.has('star10')) $('#tiny').classList.add('lit');
 
 /* when every star is found, they fly together and write her name */
 function playName() {
@@ -913,13 +1292,24 @@ function playName() {
   $('.btn', L).onclick = () => { cancelAnimationFrame(raf); L.remove(); $$('.star', $('#map')).forEach(s => s.style.opacity = ''); };
 }
 
-/* ---------- little sparkles wherever she touches the sky ---------- */
+/* ---------- little sparkles wherever she touches the sky (and maybe a caught wish) ---------- */
 addEventListener('pointerdown', e => {
-  if (e.target.closest('button,a,.stage,canvas,.scratch,.modal,#cakeSvg,.envelope,.paper,.scrap')) return;
+  if (e.target.closest('button,a,.stage,canvas,.scratch,.modal,#cakeSvg,.env,.envelope,.paper,.scrap,.jarBox,.board,.deck,.slip,.toast')) return;
+  if (current === 'home') {
+    const at = Sky.catchAt(e.clientX, e.clientY);
+    if (at) {
+      const cols = ['#fff8e6', '#f6e2b0', '#e0607f'];
+      for (let i = 0; i < 26; i++) { const a = i / 26 * Math.PI * 2; parts.push({ x: at.x, y: at.y, vx: Math.cos(a) * rand(1.5, 4), vy: Math.sin(a) * rand(1.5, 4), life: 1, decay: .022, c: cols[i % 3], s: rand(1.4, 2.4) }); }
+      if (!fxRaf) fxRaf = requestAnimationFrame(fxLoop);
+      Secrets.find('wish', at) || toast('<b>Another wish</b><p>Caught and saved. Greedy. I like it.</p>', 2600);
+      return;
+    }
+  }
   const cols = ['#fff3d6', '#f6e2b0', '#e0607f'];
   for (let i = 0; i < 12; i++) { const a = i / 12 * Math.PI * 2; parts.push({ x: e.clientX, y: e.clientY, vx: Math.cos(a) * rand(1, 2.6), vy: Math.sin(a) * rand(1, 2.6), life: 1, decay: .035, c: cols[i % 3], s: rand(1.2, 2) }); }
   if (!fxRaf) fxRaf = requestAnimationFrame(fxLoop);
 }, { passive: true });
+
 
 /* ---------- the sections (same content as before) ---------- */
 /* ---------- poems ---------- */
@@ -1223,7 +1613,7 @@ window.on_things = drawThings;
   s += `<ellipse cx="170" cy="278" rx="150" ry="16" fill="rgba(0,0,0,.35)"/><ellipse cx="170" cy="272" rx="148" ry="14" fill="#f5e6d8"/>`;
   s += `<g clip-path="url(#cakeClip)"><rect x="40" y="150" width="130" height="120" fill="url(#rv)"/><rect x="170" y="150" width="130" height="120" fill="url(#ch)"/><rect x="40" y="200" width="260" height="8" fill="#fff4ea" opacity=".85"/><rect x="40" y="236" width="260" height="6" fill="#fff4ea" opacity=".6"/></g>`;
   s += `<path d="M40 162 Q40 148 54 148 L286 148 Q300 148 300 162 L300 170 Q290 186 280 170 Q270 192 258 170 Q246 182 234 168 Q222 194 210 170 Q198 184 186 168 Q174 190 162 170 Q150 182 138 168 Q126 194 114 170 Q102 184 90 168 Q78 190 66 170 Q54 184 40 170 Z" fill="#fff4ea"/>`;
-  s += `<text x="170" y="232" text-anchor="middle" font-family="Dancing Script" font-size="26" font-weight="700" fill="#ffd6e6">Ishu · 20</text>`;
+  s += `<text id="cakeName" x="170" y="232" text-anchor="middle" font-family="Dancing Script" font-size="26" font-weight="700" fill="#ffd6e6">Ishu · 20</text>`;
   for (let i = 0; i < 20; i++) {
     const row = i < 10 ? 0 : 1, col = i % 10, x = 62 + col * 24 + (row ? 12 : 0), y = row ? 128 : 110, h = row ? 26 : 40;
     const cc = ['#ff7eb0', '#fff', '#f6c33b', '#ffd6e6'][i % 4];
@@ -1236,7 +1626,19 @@ window.on_things = drawThings;
     const sm = document.createElementNS('http://www.w3.org/2000/svg', 'circle'); sm.setAttribute('cx', f.getAttribute('cx')); sm.setAttribute('cy', f.getAttribute('cy')); sm.setAttribute('r', 4); sm.setAttribute('fill', 'rgba(220,220,220,.7)'); sm.classList.add('smoke'); svg.appendChild(sm); setTimeout(() => sm.remove(), 1400);
     if (out === 20) { $('#cakeMsg').textContent = 'All 20. Your wish is on its way, loveyyy.'; show(9); confetti(160); stopMic(); }
   };
-  svg.addEventListener('pointerdown', e => { const f = e.target.closest('.flame'); if (f) blow(f); });
+  let nameTaps = 0, nameT = 0;
+  svg.addEventListener('pointerdown', e => {
+    const f = e.target.closest('.flame'); if (f) return blow(f);
+    if (e.target.closest('#cakeName')) {
+      nameTaps++; clearTimeout(nameT); nameT = setTimeout(() => nameTaps = 0, 1500);
+      if (nameTaps >= 3) { nameTaps = 0; const r = svg.getBoundingClientRect(); sprinkles(r.left + r.width / 2, r.top + r.height * .3, r.width * .7); setTimeout(() => Secrets.find('frosting') || toast('<b>More frosting</b><p>As much as you want.</p>', 2400), 600); }
+    }
+  });
+  function sprinkles(cx, cy, w) {
+    const cols = ['#e0607f', '#f6e2b0', '#d8b06a', '#fff', '#ffc9d6', '#8fd3c8'];
+    for (let i = 0; i < 140; i++) parts.push({ x: cx + rand(-w / 2, w / 2), y: cy - rand(80, 360), vx: rand(-.4, .4), vy: rand(2.2, 4.2), life: 1, decay: .0065, c: cols[i % cols.length], s: rand(4, 6.5), conf: true, rot: rand(0, 6) });
+    if (!fxRaf) fxRaf = requestAnimationFrame(fxLoop);
+  }
   $('#relight').onclick = () => { $$('.flame', svg).forEach(f => f.classList.remove('out')); out = 0; $('#cakeMsg').textContent = 'Tap each flame to blow it out, or use your mic and actually blow.'; };
   let stream, actx, raf;
   function stopMic() { cancelAnimationFrame(raf); stream && stream.getTracks().forEach(t => t.stop()); stream = null; $('#micBtn').textContent = '🎤 blow with mic'; }
@@ -1261,8 +1663,11 @@ window.on_things = drawThings;
 (function () {
   const H = ['Happy birthday. I suppose.', "I'm not saying I'm glad you exist. But I'm not not saying it.", 'This is me being affectionate. Take it or leave it.', 'Fine. You can pet me. Once. Because it is your birthday.'];
   const P = ['MAMA IT IS YOUR BIRTHDAAAY', 'I practised this jump all year for you', 'Can I have cake. Please. Mama. Please.'];
-  let h = 0, p = 0;
-  $('#hadesBtn').onclick = () => { $('#hadesSay').innerHTML = `<div class="bubble">${H[h++ % H.length]}</div>`; };
+  let h = 0, p = 0, hTaps = 0;
+  $('#hadesBtn').onclick = () => {
+    if (++hTaps === 10) { $('#hadesSay').innerHTML = `<div class="bubble">Fine. I like you. Don't tell Percy.</div>`; const r = $('#hadesBtn').getBoundingClientRect(); Secrets.find('hades', { x: r.left + r.width / 2, y: r.top + 20 }); return; }
+    $('#hadesSay').innerHTML = `<div class="bubble">${H[h++ % H.length]}</div>`;
+  };
   $('#percyBtn').onclick = () => {
     const b = $('#percyBtn'); b.classList.remove('jump'); void b.offsetWidth; b.classList.add('jump');
     setTimeout(() => { $('#percySay').innerHTML = `<div class="bubble">${P[p++ % P.length]}</div>`; const r = b.getBoundingClientRect(); firework(r.left + r.width / 2, r.top, .5); }, 1300);
@@ -1280,6 +1685,11 @@ const LETTER = [
   'Har nazm, har lafz, bas aapke liye.',
   'I love you, princess. Happy birthday.'
 ];
+function ps(paper, s) {
+  if ($('.ps', paper)) return; s.classList.remove('tap');
+  const p = document.createElement('p'); p.className = 'ps'; paper.appendChild(p);
+  typeText(p, 'P.S. You read all of it, all the way down to here. Of course you did.', 38, () => { const r = p.getBoundingClientRect(); Secrets.find('ps', { x: r.left + r.width / 2, y: r.top + r.height / 2 }); });
+}
 window.on_letter = () => {
   const env = $('#envelope'); env.classList.remove('open'); $('#letterOut').innerHTML = ''; $('#envHint').style.display = '';
   env.onclick = () => {
@@ -1289,7 +1699,7 @@ window.on_letter = () => {
       paper.scrollIntoView({ behavior: 'smooth', block: 'start' });
       let li = 0;
       (function nextLine() {
-        if (li >= LETTER.length) { const s = document.createElement('p'); s.className = 'sign'; paper.appendChild(s); typeText(s, 'Yours, Nafay', 110, () => { confetti(70); }); return; }
+        if (li >= LETTER.length) { const s = document.createElement('p'); s.className = 'sign'; paper.appendChild(s); typeText(s, 'Yours, Nafay', 110, () => { confetti(70); s.classList.add('tap'); s.onclick = () => ps(paper, s); }); return; }
         const pEl = document.createElement('p'); paper.appendChild(pEl); if (li > 1) pEl.style.marginTop = '14px';
         typeText(pEl, LETTER[li++], 26, () => setTimeout(nextLine, 280));
       })();
@@ -1302,6 +1712,7 @@ window.on_letter = () => {
 const _startGame = startGame;
 startGame = function (id) { document.documentElement.classList.add('game-on'); _startGame(id); };
 
+Secrets.paint();
 go('countdown'); tick(); cdTimer = setInterval(tick, 1000);
 </script>
 </body>
